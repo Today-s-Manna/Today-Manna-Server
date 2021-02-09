@@ -6,7 +6,7 @@ async function getTodayManna() {
   const page = await browser.newPage();
   const id = config.jbchId;
   const pw = config.jbchPw;
-  await page.goto('https://community.jbch.org/');
+  await page.goto('https://community.jbch.org/',{ waitUntil: 'load', timeout: 0 });
 
   await page.evaluate(
     (id, pw) => {
@@ -18,25 +18,15 @@ async function getTodayManna() {
     pw,
   );
 
-  // For local server
-  const todayArray = new Date()
-    .toLocaleDateString('ko-KR', {
-      timeZone: 'Asia/Seoul',
-    })
-    .split('.');
-  let year = todayArray[0],
-    month = todayArray[1].slice(1),
-    day = todayArray[2].slice(1);
-
   // For EC2 server
-  // const todayArray = new Date()
-  //   .toLocaleDateString('ko-KR', {
-  //     timeZone: 'Asia/Seoul',
-  //   })
-  //   .split('-');
-  // let year = todayArray[0],
-  //   month = todayArray[1],
-  //   day = todayArray[2];
+  const todayArray = new Date()
+     .toLocaleDateString('ko-KR', {
+       timeZone: 'Asia/Seoul',
+     })
+     .split('-');
+   let year = todayArray[0],
+     month = todayArray[1],
+     day = todayArray[2];
 
   if (month.length === 1) {
     month = '0' + month;
@@ -64,11 +54,18 @@ async function getTodayManna() {
 
     const today_manna = await page.evaluate((manna_selector) => {
       const verse = document.querySelector(manna_selector).textContent;
-      let contents = Array.from(
+      let temp = Array.from(
         document.querySelectorAll('#bbs_view > div.contentbox.fr-view > p'),
         (e) => e.textContent,
       );
-      contents = contents.map((e) => e.slice(0, -1));
+      const contents = [];
+      temp.forEach((e) => {
+        if (e[e.length - 1] === '\xA0') {
+          contents.push(e.slice(0, -1));
+        } else {
+          contents.push(e);
+        }
+      });
       const today_manna = {
         verse: verse,
         contents: contents,

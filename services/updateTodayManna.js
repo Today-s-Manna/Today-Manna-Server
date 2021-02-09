@@ -1,5 +1,5 @@
 const { TodayManna } = require('../models');
-const { getTodayManna } = require('./getTodayManna');
+const { getTodayManna } = require('./getTodayManna_v2');
 const { logger } = require('../config/winston');
 
 async function updateTodayManna() {

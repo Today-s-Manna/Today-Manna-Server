@@ -37,7 +37,7 @@ app.listen(app.get('port'), () => {
 });
 
 // update today manna (at 00:01 AM)
-schedule.scheduleJob('01 00 * * 1-6', async () => {
+schedule.scheduleJob('5 0 0 * * 1-7', async () => {
   try {
     let res = await updateTodayManna();
     if (!res) {
@@ -53,7 +53,7 @@ schedule.scheduleJob('01 00 * * 1-6', async () => {
   }
 });
 // double check today manna (at 05:00 AM)
-schedule.scheduleJob('0 5 * * 1-6', async () => {
+schedule.scheduleJob('0 5 * * 1-7', async () => {
   try {
     let res = await updateTodayManna();
     if (!res) {
